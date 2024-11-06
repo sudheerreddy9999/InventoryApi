@@ -30,7 +30,7 @@ const authenticateDb =()=>{
 const startServer = ()=>{
     try {
         app.listen(appConfig.PORT,()=>{
-            console.log("App listening on port 3000");
+            console.log(`App listening on port ${appConfig.PORT}`);
         }) 
     } catch (error) {
         console.error(error.message);
