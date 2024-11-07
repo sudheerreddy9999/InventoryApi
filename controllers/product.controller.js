@@ -16,12 +16,22 @@ const GetProductsController = async (request, response) => {
 const PostProductController = async (request, response) => {
   try {
     const data = await ProductService.PostProductService(request);
-    return response.status(200).json({message: STATUSMESSAGE[200], productId: data})
+    return response.status(200).json({ message: STATUSMESSAGE[200], productId: data });
   } catch (error) {
     console.error({ PostProductController: error.message });
     return response.status(500).json({ message: STATUSMESSAGE[500] });
   }
 };
-const productsController = { GetProductsController, PostProductController };
+
+const GetProductByIdController = async (request, response) => {
+  try {
+    const data = await ProductService.GetProductByIdService(request);
+    return response.status(200).json({ message: STATUSMESSAGE[200], data: data });
+  } catch (error) {
+    console.error({ GetProductByIdController: error.message });
+    return response.status(500).json({ message: STATUSMESSAGE[500] });
+  }
+};
+const productsController = { GetProductsController, PostProductController, GetProductByIdController };
 
 export default productsController;

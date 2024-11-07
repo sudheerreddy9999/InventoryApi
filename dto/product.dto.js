@@ -30,7 +30,6 @@ const PostProductDTO = async (productData) => {
 
 const PostProductImageDTO = async (imageData) => {
   try {
-    console.log(imageData)
     const query = QUERY.POST_PRODUCT_IMAGE;
     const [result] = await pgsql.query(query, {
       type: QueryTypes.INSERT,
@@ -44,6 +43,35 @@ const PostProductImageDTO = async (imageData) => {
   }
 };
 
-const ProductsDTO = { GetProductsDTO, PostProductDTO, PostProductImageDTO };
+const GetProductByIdDTO = async (product_id) => {
+  try {
+    const query = QUERY.GET_PRODUCT_BY_ID;
+    const [result] = await pgsql.query(query, {
+      type: QueryTypes.SELECT,
+      replacements: { product_id },
+    });
+    return result;
+  } catch (error) {
+    console.error({ GetProductByIdDTO: error.message });
+    throw new Error(error.message);
+  }
+};
+
+const GetProductImagesByIdDTO = async (product_id) => {
+  try {
+    const query = QUERY.GET_PRODUCT_IMAGES_BY_ID;
+    const result = await pgsql.query(query, {
+      type: QueryTypes.SELECT,
+      replacements: { product_id },
+    });
+
+    return result;
+  } catch (error) {
+    console.error({ GetProductImagesByIdDTO: error.message });
+    throw new Error(error.message);
+  }
+};
+
+const ProductsDTO = { GetProductsDTO, PostProductDTO, PostProductImageDTO, GetProductByIdDTO, GetProductImagesByIdDTO };
 
 export default ProductsDTO;

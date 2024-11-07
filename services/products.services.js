@@ -6,8 +6,9 @@ const GetProductService = async () => {
   try {
     const data = await ProductsDTO.GetProductsDTO();
     const formatedData = data.map((d) => {
-      return{
-        product_name : d.product_name ? d.product_name : null,
+      return {
+        product_id: d.product_id ? d.product_id : null,
+        product_name: d.product_name ? d.product_name : null,
         product_category: d.product_category ? d.product_category : null,
         cost_price: d.cost_price ? d.cost_price : null,
         quantity_in_stock: d.quantity_in_stock ? d.quantity_in_stock : null,
@@ -15,11 +16,11 @@ const GetProductService = async () => {
         discount_value: d.discount_value ? d.discount_value : null,
         action: d.action ? d.action : null,
         status: d.status ? d.status : null,
-        image_data : d.image_data ? d.image_data.toString('base64') : null,
+        image_data: d.image_data ? d.image_data.toString('base64') : null,
         image_extension: d.image_extension ? d.image_extension : null,
-        image_name: d.image_name ? d.image_name : null
-      }
-    })
+        image_name: d.image_name ? d.image_name : null,
+      };
+    });
     return formatedData;
   } catch (error) {
     console.error({ GetProductService: error.message });
@@ -42,7 +43,7 @@ const PostProductService = async (request) => {
       expiryDate,
       shortDescription,
       longDescription,
-      returnPolicyTime
+      returnPolicyTime,
     } = request.body;
 
     const files = request.files;
@@ -73,7 +74,7 @@ const PostProductService = async (request) => {
         imageData: coverImageFile.buffer,
         imageExtension: coverImageFile.mimetype.split('/')[1],
         imageName: coverImageFile.originalname,
-        isBanner: 'Y'
+        isBanner: 'Y',
       });
     }
 
@@ -98,6 +99,34 @@ const PostProductService = async (request) => {
   }
 };
 
-const ProductService = { GetProductService,PostProductService};
+const GetProductByIdService = async (request) => {
+  try {
+    const { product_id } = request.headers;
+    const data = await ProductsDTO.GetProductByIdDTO(product_id);
+    if (data.length === 0) {
+      return [];
+    }
+
+    const imagedata = await ProductsDTO.GetProductImagesByIdDTO(product_id);
+    const formatedImageData = imagedata.map((i) => {
+      return {
+        image_data: i.image_data ? i.image_data.toString('base64') : null,
+        image_extension: i.image_extension ? i.image_extension : null,
+        is_banner: i.is_banner ? i.is_banner : null,
+        image_name: i.image_name ? i.image_name : null,
+      };
+    });
+    const formatedData = {
+      ...data,
+      imagedata: formatedImageData,
+    };
+    return formatedData;
+  } catch (error) {
+    console.error({ GetProductByIdService: error.message });
+    throw new Error(error.message);
+  }
+};
+
+const ProductService = { GetProductService, PostProductService, GetProductByIdService };
 
 export default ProductService;

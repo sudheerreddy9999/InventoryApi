@@ -8,6 +8,8 @@ const Router = express.Router();
 
 Router.get('/products', ProductsController.GetProductsController);
 
+Router.get('/products/id', ProductsController.GetProductByIdController);
+
 Router.post(
   '/products',
   upload.fields([
