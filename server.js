@@ -38,9 +38,9 @@ const startServer = () => {
   }
 };
 
-cron.schedule('*/50 * * * * *', () => {
-    console.log('Running the scheduled task...');
-    authenticateDb();
-  });
+// cron.schedule('*/50 * * * * *', () => {
+//     console.log('Running the scheduled task...');
+//     authenticateDb();
+//   });
 startServer();
 authenticateDb();
