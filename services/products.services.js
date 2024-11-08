@@ -65,7 +65,7 @@ const PostProductService = async (request) => {
       longDescription,
       returnPolicyTime,
       action: action ? action : 'draft',
-      status: action === 'draft' ? unpublish : publish,
+      status: action === 'draft' ? 'unpublish' : 'publish',
       createdBy: 1,
       updatedBy: 1,
     };
@@ -170,7 +170,7 @@ const UpdateProductService = async (request) => {
       returnPolicyTime,
       updatedBy: 1,
       action: action ? action : 'draft',
-      status: action === 'draft' ? unpublish : publish,
+      status: action === 'draft' ? 'unpublish' : 'publish',
     };
 
     const result = await ProductsDTO.UpdateProductDTO(productData);
