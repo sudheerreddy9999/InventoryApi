@@ -18,4 +18,13 @@ Router.post(
   ]),
   ProductsController.PostProductController,
 );
+
+Router.put(
+  '/products',
+  upload.fields([
+    { name: 'coverImage', maxCount: 1 },
+    { name: 'additionalImages', maxCount: 2 },
+  ]),
+  ProductsController.UpdateProductController,
+);
 export default Router;

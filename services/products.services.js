@@ -1,6 +1,8 @@
 'use strict';
 import ProductsDTO from '../dto/product.dto.js';
 import pgsql from '../config/database/database.config.js';
+import QUERY from '../config/app/query.config.js';
+import { QueryTypes } from 'sequelize';
 
 const GetProductService = async () => {
   try {
@@ -127,6 +129,82 @@ const GetProductByIdService = async (request) => {
   }
 };
 
-const ProductService = { GetProductService, PostProductService, GetProductByIdService };
+const UpdateProductService = async (request) => {
+  const t = await pgsql.transaction();
+  try {
+    const {
+      productId,
+      productName,
+      productCategory,
+      sellingPrice,
+      costPrice,
+      quantityInStock,
+      orderType,
+      discountType,
+      discountValue,
+      expiryDate,
+      shortDescription,
+      longDescription,
+      returnPolicyTime,
+    } = request.body;
+
+    const files = request.files;
+
+    const productData = {
+      productId,
+      productName,
+      productCategory,
+      sellingPrice,
+      costPrice,
+      quantityInStock,
+      orderType,
+      discountType,
+      discountValue,
+      expiryDate,
+      shortDescription,
+      longDescription,
+      returnPolicyTime,
+      updatedBy: 1,
+    };
+
+    const result = await ProductsDTO.UpdateProductDTO(productData);
+    if (result) {
+      await pgsql.query(QUERY.DELETE_PRODUCT_IMAGES, {
+        type: QueryTypes.DELETE,
+        replacements: { productId },
+      });
+      if (files.coverImage) {
+        const coverImageFile = files.coverImage[0];
+        await ProductsDTO.PostProductImageDTO({
+          productId,
+          imageData: coverImageFile.buffer,
+          imageExtension: coverImageFile.mimetype.split('/')[1],
+          imageName: coverImageFile.originalname,
+          isBanner: 'Y',
+        });
+      }
+
+      if (files.additionalImages) {
+        for (const image of files.additionalImages) {
+          await ProductsDTO.PostProductImageDTO({
+            productId,
+            imageData: image.buffer,
+            imageExtension: image.mimetype.split('/')[1],
+            imageName: image.originalname,
+            isBanner: 'N',
+          });
+        }
+      }
+    }
+    await t.commit();
+    return result;
+  } catch (error) {
+    await t.rollback();
+    console.error({ PostProductService: error.message });
+    throw new Error(error.message);
+  }
+};
+
+const ProductService = { GetProductService, PostProductService, GetProductByIdService, UpdateProductService };
 
 export default ProductService;

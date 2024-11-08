@@ -72,6 +72,27 @@ const GetProductImagesByIdDTO = async (product_id) => {
   }
 };
 
-const ProductsDTO = { GetProductsDTO, PostProductDTO, PostProductImageDTO, GetProductByIdDTO, GetProductImagesByIdDTO };
+const UpdateProductDTO = async (productData) => {
+  try {
+    const query = QUERY.UPDATE_PRODUCTS;
+    const [result] = await pgsql.query(query, {
+      type: QueryTypes.UPDATE,
+      replacements: productData,
+    });
+    return result;
+  } catch (error) {
+    console.error({ UpdateProductDTO: error.message });
+    throw new Error(error.message);
+  }
+};
+
+const ProductsDTO = {
+  GetProductsDTO,
+  PostProductDTO,
+  PostProductImageDTO,
+  GetProductByIdDTO,
+  GetProductImagesByIdDTO,
+  UpdateProductDTO,
+};
 
 export default ProductsDTO;
