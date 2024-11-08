@@ -13,7 +13,7 @@ const GetProductService = async () => {
         product_name: d.product_name ? d.product_name : null,
         product_category: d.product_category ? d.product_category : null,
         cost_price: d.cost_price ? d.cost_price : null,
-        quantity_in_stock: d.quantity_in_stock ? d.quantity_in_stock : null,
+        quantity_in_stock: d.quantity_in_stock && d.quantity_in_stock > 0 ? d.quantity_in_stock : 'Out Of Stock',
         discount_type: d.discount_type ? d.discount_type : null,
         discount_value: d.discount_value ? d.discount_value : null,
         action: d.action ? d.action : null,
@@ -46,6 +46,7 @@ const PostProductService = async (request) => {
       shortDescription,
       longDescription,
       returnPolicyTime,
+      action,
     } = request.body;
 
     const files = request.files;
@@ -63,6 +64,8 @@ const PostProductService = async (request) => {
       shortDescription,
       longDescription,
       returnPolicyTime,
+      action: action ? action : 'draft',
+      status: action === 'draft' ? unpublish : publish,
       createdBy: 1,
       updatedBy: 1,
     };
@@ -146,6 +149,7 @@ const UpdateProductService = async (request) => {
       shortDescription,
       longDescription,
       returnPolicyTime,
+      action,
     } = request.body;
 
     const files = request.files;
@@ -165,6 +169,8 @@ const UpdateProductService = async (request) => {
       longDescription,
       returnPolicyTime,
       updatedBy: 1,
+      action: action ? action : 'draft',
+      status: action === 'draft' ? unpublish : publish,
     };
 
     const result = await ProductsDTO.UpdateProductDTO(productData);
